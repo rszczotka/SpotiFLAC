@@ -26,6 +26,8 @@ export interface Settings {
     autoOrder: "tidal-qobuz-amazon" | "tidal-amazon-qobuz" | "qobuz-tidal-amazon" | "qobuz-amazon-tidal" | "amazon-tidal-qobuz" | "amazon-qobuz-tidal" | "tidal-qobuz" | "tidal-amazon" | "qobuz-tidal" | "qobuz-amazon" | "amazon-tidal" | "amazon-qobuz";
     autoQuality: "16" | "24";
     allowFallback: boolean;
+    groupSingles: boolean;
+    singlesFolder: string;
 }
 export const FOLDER_PRESETS: Record<FolderPreset, {
     label: string;
@@ -101,7 +103,9 @@ export const DEFAULT_SETTINGS: Settings = {
     amazonQuality: "original",
     autoOrder: "tidal-qobuz-amazon",
     autoQuality: "16",
-    allowFallback: true
+    allowFallback: true,
+    groupSingles: true,
+    singlesFolder: "_SINGLES"
 };
 export const FONT_OPTIONS: {
     value: FontFamily;

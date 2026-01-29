@@ -13,7 +13,7 @@ export function useLyrics() {
     const [isBulkDownloadingLyrics, setIsBulkDownloadingLyrics] = useState(false);
     const [lyricsDownloadProgress, setLyricsDownloadProgress] = useState(0);
     const stopBulkDownloadRef = useRef(false);
-    const handleDownloadLyrics = async (spotifyId: string, trackName: string, artistName: string, albumName?: string, playlistName?: string, position?: number, albumArtist?: string, releaseDate?: string, discNumber?: number, isAlbum?: boolean) => {
+    const handleDownloadLyrics = async (spotifyId: string, trackName: string, artistName: string, albumName?: string, playlistName?: string, position?: number, albumArtist?: string, releaseDate?: string, discNumber?: number, isAlbum?: boolean, totalTracks?: number) => {
         if (!spotifyId) {
             toast.error("No Spotify ID found for this track");
             return;
@@ -37,7 +37,10 @@ export function useLyrics() {
             if (playlistName && (!isAlbum || !useAlbumSubfolder)) {
                 outputDir = joinPath(os, outputDir, sanitizePath(playlistName.replace(/\//g, " "), os));
             }
-            if (settings.folderTemplate) {
+            if (settings.groupSingles && totalTracks === 1 && settings.singlesFolder) {
+                outputDir = joinPath(os, outputDir, sanitizePath(settings.singlesFolder, os));
+            }
+            else if (settings.folderTemplate) {
                 const folderPath = parseTemplate(settings.folderTemplate, templateData);
                 if (folderPath) {
                     const parts = folderPath.split("/").filter((p: string) => p.trim());
@@ -132,7 +135,10 @@ export function useLyrics() {
                 if (playlistName && (!isAlbum || !useAlbumSubfolder)) {
                     outputDir = joinPath(os, outputDir, sanitizePath(playlistName.replace(/\//g, " "), os));
                 }
-                if (settings.folderTemplate) {
+                if (settings.groupSingles && track.total_tracks === 1 && settings.singlesFolder) {
+                    outputDir = joinPath(os, outputDir, sanitizePath(settings.singlesFolder, os));
+                }
+                else if (settings.folderTemplate) {
                     const folderPath = parseTemplate(settings.folderTemplate, templateData);
                     if (folderPath) {
                         const parts = folderPath.split("/").filter((p: string) => p.trim());

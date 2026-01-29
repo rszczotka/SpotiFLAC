@@ -88,7 +88,10 @@ export function useDownload(region: string) {
         if (playlistName && !useAlbumSubfolder) {
             outputDir = joinPath(os, outputDir, sanitizePath(playlistName.replace(/\//g, " "), os));
         }
-        if (settings.folderTemplate) {
+        if (settings.groupSingles && spotifyTotalTracks === 1 && settings.singlesFolder) {
+            outputDir = joinPath(os, outputDir, sanitizePath(settings.singlesFolder, os));
+        }
+        else if (settings.folderTemplate) {
             const folderPath = parseTemplate(settings.folderTemplate, templateData);
             if (folderPath) {
                 const parts = folderPath.split("/").filter((p: string) => p.trim());
@@ -378,7 +381,10 @@ export function useDownload(region: string) {
         if (folderName && (!isAlbum || !useAlbumSubfolder)) {
             outputDir = joinPath(os, outputDir, sanitizePath(folderName.replace(/\//g, " "), os));
         }
-        if (settings.folderTemplate) {
+        if (settings.groupSingles && spotifyTotalTracks === 1 && settings.singlesFolder) {
+            outputDir = joinPath(os, outputDir, sanitizePath(settings.singlesFolder, os));
+        }
+        else if (settings.folderTemplate) {
             const folderPath = parseTemplate(settings.folderTemplate, templateData);
             if (folderPath) {
                 const parts = folderPath.split("/").filter(p => p.trim());
