@@ -37,7 +37,7 @@ export function useLyrics() {
             if (playlistName && (!isAlbum || !useAlbumSubfolder)) {
                 outputDir = joinPath(os, outputDir, sanitizePath(playlistName.replace(/\//g, " "), os));
             }
-            if (settings.groupSingles && totalTracks === 1 && settings.singlesFolder) {
+            else if (settings.groupSingles && totalTracks === 1 && settings.singlesFolder && settings.singlesFolder.trim()) {
                 outputDir = joinPath(os, outputDir, sanitizePath(settings.singlesFolder, os));
             }
             else if (settings.folderTemplate) {
@@ -135,7 +135,7 @@ export function useLyrics() {
                 if (playlistName && (!isAlbum || !useAlbumSubfolder)) {
                     outputDir = joinPath(os, outputDir, sanitizePath(playlistName.replace(/\//g, " "), os));
                 }
-                if (settings.groupSingles && track.total_tracks === 1 && settings.singlesFolder) {
+                else if (settings.groupSingles && track.total_tracks === 1 && settings.singlesFolder && settings.singlesFolder.trim()) {
                     outputDir = joinPath(os, outputDir, sanitizePath(settings.singlesFolder, os));
                 }
                 else if (settings.folderTemplate) {

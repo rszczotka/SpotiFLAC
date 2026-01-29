@@ -114,7 +114,7 @@ export function TrackInfo({ track, isDownloading, downloadingTrack, isDownloaded
             </Tooltip>)}
             {track.spotify_id && onDownloadLyrics && (<Tooltip>
               <TooltipTrigger asChild>
-                <Button onClick={() => onDownloadLyrics(track.spotify_id!, track.name, track.artists, track.album_name, track.album_artist, track.release_date, track.disc_number)} variant="outline" size="icon" disabled={downloadingLyricsTrack === track.spotify_id}>
+                <Button onClick={() => onDownloadLyrics(track.spotify_id!, track.name, track.artists, track.album_name, track.album_artist, track.release_date, track.disc_number, track.total_tracks)} variant="outline" size="icon" disabled={downloadingLyricsTrack === track.spotify_id}>
                   {downloadingLyricsTrack === track.spotify_id ? (<Spinner />) : skippedLyrics ? (<FileCheck className="h-4 w-4 text-yellow-500"/>) : downloadedLyrics ? (<CheckCircle className="h-4 w-4 text-green-500"/>) : failedLyrics ? (<XCircle className="h-4 w-4 text-red-500"/>) : (<FileText className="h-4 w-4"/>)}
                 </Button>
               </TooltipTrigger>
