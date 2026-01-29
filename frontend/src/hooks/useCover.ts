@@ -52,7 +52,6 @@ export function useCover() {
                         outputDir = joinPath(os, outputDir, sanitizePath(sanitizedPart, os));
                     }
                 }
-                }
             }
             const response = await downloadCover({
                 cover_url: coverUrl,
