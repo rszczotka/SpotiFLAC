@@ -402,6 +402,35 @@ export function SettingsPage({ onUnsavedChangesChange, onResetRequest }: Setting
             Preview: <span className="font-mono">{tempSettings.filenameTemplate.replace(/\{artist\}/g, "Kendrick Lamar, SZA").replace(/\{album_artist\}/g, "Kendrick Lamar").replace(/\{title\}/g, "All The Stars").replace(/\{track\}/g, "01").replace(/\{disc\}/g, "1").replace(/\{year\}/g, "2018")}.flac</span>
           </p>)}
         </div>
+
+        <div className="border-t"/>
+
+        <div className="space-y-3">
+          <div className="flex items-center gap-2">
+            <Label className="text-sm">Singles Management</Label>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help"/>
+              </TooltipTrigger>
+              <TooltipContent side="top">
+                <p className="text-xs max-w-xs">Group single-track releases into a separate folder instead of creating individual album folders</p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
+          <div className="flex items-center justify-between">
+            <Label htmlFor="group-singles" className="text-sm font-normal cursor-pointer">
+              Group single-track releases
+            </Label>
+            <Switch id="group-singles" checked={tempSettings.groupSingles} onCheckedChange={(checked) => setTempSettings(prev => ({ ...prev, groupSingles: checked }))}/>
+          </div>
+          {tempSettings.groupSingles && (<div className="space-y-1">
+            <Label className="text-xs text-muted-foreground">Singles folder name</Label>
+            <InputWithContext value={tempSettings.singlesFolder} onChange={(e) => setTempSettings(prev => ({ ...prev, singlesFolder: e.target.value }))} placeholder="_SINGLES" className="h-9 text-sm"/>
+            <p className="text-xs text-muted-foreground">
+              Releases with only 1 track will be saved to: <span className="font-mono">{tempSettings.downloadPath ? `${tempSettings.downloadPath}/${tempSettings.singlesFolder}` : `[Download Path]/${tempSettings.singlesFolder}`}</span>
+            </p>
+          </div>)}
+        </div>
       </div>
     </div>
 

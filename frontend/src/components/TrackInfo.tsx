@@ -27,9 +27,9 @@ interface TrackInfoProps {
     failedCover?: boolean;
     skippedCover?: boolean;
     onDownload: (isrc: string, name: string, artists: string, albumName?: string, spotifyId?: string, playlistName?: string, durationMs?: number, position?: number, albumArtist?: string, releaseDate?: string, coverUrl?: string, spotifyTrackNumber?: number, spotifyDiscNumber?: number, spotifyTotalTracks?: number, spotifyTotalDiscs?: number, copyright?: string, publisher?: string) => void;
-    onDownloadLyrics?: (spotifyId: string, name: string, artists: string, albumName?: string, albumArtist?: string, releaseDate?: string, discNumber?: number) => void;
+    onDownloadLyrics?: (spotifyId: string, name: string, artists: string, albumName?: string, albumArtist?: string, releaseDate?: string, discNumber?: number, totalTracks?: number) => void;
     onCheckAvailability?: (spotifyId: string, isrc?: string) => void;
-    onDownloadCover?: (coverUrl: string, trackName: string, artistName: string, albumName?: string, playlistName?: string, position?: number, trackId?: string, albumArtist?: string, releaseDate?: string, discNumber?: number) => void;
+    onDownloadCover?: (coverUrl: string, trackName: string, artistName: string, albumName?: string, playlistName?: string, position?: number, trackId?: string, albumArtist?: string, releaseDate?: string, discNumber?: number, totalTracks?: number) => void;
     onOpenFolder: () => void;
     onBack?: () => void;
 }
@@ -114,7 +114,7 @@ export function TrackInfo({ track, isDownloading, downloadingTrack, isDownloaded
             </Tooltip>)}
             {track.spotify_id && onDownloadLyrics && (<Tooltip>
               <TooltipTrigger asChild>
-                <Button onClick={() => onDownloadLyrics(track.spotify_id!, track.name, track.artists, track.album_name, track.album_artist, track.release_date, track.disc_number)} variant="outline" size="icon" disabled={downloadingLyricsTrack === track.spotify_id}>
+                <Button onClick={() => onDownloadLyrics(track.spotify_id!, track.name, track.artists, track.album_name, track.album_artist, track.release_date, track.disc_number, track.total_tracks)} variant="outline" size="icon" disabled={downloadingLyricsTrack === track.spotify_id}>
                   {downloadingLyricsTrack === track.spotify_id ? (<Spinner />) : skippedLyrics ? (<FileCheck className="h-4 w-4 text-yellow-500"/>) : downloadedLyrics ? (<CheckCircle className="h-4 w-4 text-green-500"/>) : failedLyrics ? (<XCircle className="h-4 w-4 text-red-500"/>) : (<FileText className="h-4 w-4"/>)}
                 </Button>
               </TooltipTrigger>
@@ -124,7 +124,7 @@ export function TrackInfo({ track, isDownloading, downloadingTrack, isDownloaded
             </Tooltip>)}
             {track.images && onDownloadCover && (<Tooltip>
               <TooltipTrigger asChild>
-                <Button onClick={() => onDownloadCover(track.images, track.name, track.artists, track.album_name, undefined, undefined, track.spotify_id, track.album_artist, track.release_date, track.disc_number)} variant="outline" size="icon" disabled={downloadingCover}>
+                <Button onClick={() => onDownloadCover(track.images, track.name, track.artists, track.album_name, undefined, undefined, track.spotify_id, track.album_artist, track.release_date, track.disc_number, track.total_tracks)} variant="outline" size="icon" disabled={downloadingCover}>
                   {downloadingCover ? (<Spinner />) : skippedCover ? (<FileCheck className="h-4 w-4 text-yellow-500"/>) : downloadedCover ? (<CheckCircle className="h-4 w-4 text-green-500"/>) : failedCover ? (<XCircle className="h-4 w-4 text-red-500"/>) : (<ImageDown className="h-4 w-4"/>)}
                 </Button>
               </TooltipTrigger>

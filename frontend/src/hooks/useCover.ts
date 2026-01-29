@@ -14,7 +14,7 @@ export function useCover() {
     const [isBulkDownloadingCovers, setIsBulkDownloadingCovers] = useState(false);
     const [coverDownloadProgress, setCoverDownloadProgress] = useState(0);
     const stopBulkDownloadRef = useRef(false);
-    const handleDownloadCover = async (coverUrl: string, trackName: string, artistName: string, albumName?: string, playlistName?: string, position?: number, trackId?: string, albumArtist?: string, releaseDate?: string, discNumber?: number, isAlbum?: boolean) => {
+    const handleDownloadCover = async (coverUrl: string, trackName: string, artistName: string, albumName?: string, playlistName?: string, position?: number, trackId?: string, albumArtist?: string, releaseDate?: string, discNumber?: number, isAlbum?: boolean, totalTracks?: number) => {
         if (!coverUrl) {
             toast.error("No cover URL found for this track");
             return;
@@ -40,7 +40,10 @@ export function useCover() {
             if (playlistName && (!isAlbum || !useAlbumSubfolder)) {
                 outputDir = joinPath(os, outputDir, sanitizePath(playlistName.replace(/\//g, " "), os));
             }
-            if (settings.folderTemplate) {
+            else if (settings.groupSingles && totalTracks === 1 && settings.singlesFolder && settings.singlesFolder.trim()) {
+                outputDir = joinPath(os, outputDir, sanitizePath(settings.singlesFolder, os));
+            }
+            else if (settings.folderTemplate) {
                 const folderPath = parseTemplate(settings.folderTemplate, templateData);
                 if (folderPath) {
                     const parts = folderPath.split("/").filter((p: string) => p.trim());
@@ -136,7 +139,10 @@ export function useCover() {
                 if (playlistName && (!isAlbum || !useAlbumSubfolder)) {
                     outputDir = joinPath(os, outputDir, sanitizePath(playlistName.replace(/\//g, " "), os));
                 }
-                if (settings.folderTemplate) {
+                else if (settings.groupSingles && track.total_tracks === 1 && settings.singlesFolder && settings.singlesFolder.trim()) {
+                    outputDir = joinPath(os, outputDir, sanitizePath(settings.singlesFolder, os));
+                }
+                else if (settings.folderTemplate) {
                     const folderPath = parseTemplate(settings.folderTemplate, templateData);
                     if (folderPath) {
                         const parts = folderPath.split("/").filter((p: string) => p.trim());
