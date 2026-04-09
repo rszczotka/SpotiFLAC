@@ -245,31 +245,52 @@ func (a *App) GetSpotifyMetadata(req SpotifyMetadataRequest) (string, error) {
 		}
 	}
 
+	useAPI := false
+	apiURL := ""
 	if err == nil && settings != nil {
-		if useAPI, ok := settings["useSpotFetchAPI"].(bool); ok && useAPI {
-			if apiURL, ok := settings["spotFetchAPIUrl"].(string); ok && apiURL != "" {
-
-				data, err := backend.GetSpotifyDataWithAPI(ctx, req.URL, true, apiURL, req.Batch, time.Duration(req.Delay*float64(time.Second)), separator, func(tracks interface{}) {
-					runtime.EventsEmit(a.ctx, "metadata-stream", tracks)
-				})
-				if err != nil {
-					return "", fmt.Errorf("failed to fetch metadata from API: %v", err)
-				}
-
-				jsonData, err := json.MarshalIndent(data, "", "  ")
-				if err != nil {
-					return "", fmt.Errorf("failed to encode response: %v", err)
-				}
-
-				return string(jsonData), nil
-			}
+		if configuredUseAPI, ok := settings["useSpotFetchAPI"].(bool); ok {
+			useAPI = configuredUseAPI
 		}
+		if configuredAPIURL, ok := settings["spotFetchAPIUrl"].(string); ok {
+			apiURL = strings.TrimSpace(configuredAPIURL)
+		}
+	}
+
+	var apiFetchErr error
+	if useAPI && apiURL != "" {
+		data, apiErr := backend.GetSpotifyDataWithAPI(ctx, req.URL, true, apiURL, req.Batch, time.Duration(req.Delay*float64(time.Second)), separator, func(tracks interface{}) {
+			runtime.EventsEmit(a.ctx, "metadata-stream", tracks)
+		})
+		if apiErr == nil {
+			jsonData, marshalErr := json.MarshalIndent(data, "", "  ")
+			if marshalErr != nil {
+				return "", fmt.Errorf("failed to encode response: %v", marshalErr)
+			}
+			return string(jsonData), nil
+		}
+		apiFetchErr = apiErr
 	}
 
 	data, err := backend.GetFilteredSpotifyData(ctx, req.URL, req.Batch, time.Duration(req.Delay*float64(time.Second)), separator, func(tracks interface{}) {
 		runtime.EventsEmit(a.ctx, "metadata-stream", tracks)
 	})
 	if err != nil {
+		if !useAPI && apiURL != "" {
+			fallbackData, fallbackErr := backend.GetSpotifyDataWithAPI(ctx, req.URL, true, apiURL, req.Batch, time.Duration(req.Delay*float64(time.Second)), separator, func(tracks interface{}) {
+				runtime.EventsEmit(a.ctx, "metadata-stream", tracks)
+			})
+			if fallbackErr == nil {
+				jsonData, marshalErr := json.MarshalIndent(fallbackData, "", "  ")
+				if marshalErr != nil {
+					return "", fmt.Errorf("failed to encode response: %v", marshalErr)
+				}
+				return string(jsonData), nil
+			}
+			return "", fmt.Errorf("failed to fetch metadata: %v (fallback SpotFetch API error: %v)", err, fallbackErr)
+		}
+		if apiFetchErr != nil {
+			return "", fmt.Errorf("failed to fetch metadata from API (%v) and local fetch (%v)", apiFetchErr, err)
+		}
 		return "", fmt.Errorf("failed to fetch metadata: %v", err)
 	}
 
